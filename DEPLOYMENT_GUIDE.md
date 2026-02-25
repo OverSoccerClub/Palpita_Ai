@@ -15,11 +15,13 @@ Implementei as correções definitivas para o sistema de saques, incluindo supor
 2. O Banco de Dados já existe (vimos na imagem), então vamos focar na API e Web:
 3. **API (Backend)**:
    - Crie um novo serviço do tipo **App**.
-   - Aponte para o repositório GitHub e para a pasta `backend`.
+   - **Aba Github**: Build Path = `backend` (sem a barra inicial).
+   - **Aba Dockerfile**: Mude o campo **Path** de `Dockerfile` para `backend/Dockerfile`.
    - Use a variável de ambiente: `DATABASE_URL=postgresql://postgres:Infor586467@palpitai-app_postgres-banco:5432/palpitai-app?sslmode=disable`.
 4. **Web (Frontend)**:
    - Crie outro serviço do tipo **App**.
-   - Aponte para a pasta `frontend`.
+   - **Aba Github**: Build Path = `frontend` (sem a barra inicial).
+   - **Aba Dockerfile**: Mude o campo **Path** de `Dockerfile` para `frontend/Dockerfile`.
    - Configure a variável: `NEXT_PUBLIC_API_URL=https://sua-url-da-api.com`.
 
 ### Frontend e Backend
