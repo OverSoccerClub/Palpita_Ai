@@ -34,4 +34,4 @@ COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/clie
 EXPOSE 3001
 
 # Command to run migrations and start the server
-CMD npx prisma migrate deploy && node dist/main
+CMD npx prisma migrate deploy && node dist/src/main
