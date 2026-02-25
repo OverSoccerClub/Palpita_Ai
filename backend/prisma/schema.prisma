@@ -1,0 +1,189 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  name      String
+  cpf       String    @unique
+  phone     String?
+  birthDate DateTime
+  role      UserRole  @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  betSlips  BetSlip[]
+  wallet    Wallet?
+}
+
+model Wallet {
+  id           String        @id @default(uuid())
+  userId       String        @unique
+  balance      Decimal       @default(0) @db.Decimal(10, 2)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+  user         User          @relation(fields: [userId], references: [id])
+}
+
+model Transaction {
+  id           String            @id @default(uuid())
+  walletId     String
+  type         TransactionType
+  status       TransactionStatus @default(PENDING)
+  amount       Decimal           @db.Decimal(10, 2)
+  description  String?
+  createdAt    DateTime          @default(now())
+  externalId   String?
+  paymentOrder PaymentOrder?
+  wallet       Wallet            @relation(fields: [walletId], references: [id])
+}
+
+model PaymentGateway {
+  id          String          @id @default(uuid())
+  name        String
+  provider    GatewayProvider
+  credentials Json
+  isActive            Boolean         @default(false)
+  automaticWithdrawal Boolean         @default(true)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  orders      PaymentOrder[]
+}
+
+model PaymentOrder {
+  id            String         @id @default(uuid())
+  transactionId String         @unique
+  gatewayId     String
+  externalId    String
+  status        OrderStatus    @default(PENDING)
+  pixCode       String?
+  pixQrBase64   String?
+  expiresAt     DateTime?
+  checkedAt     DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  gateway       PaymentGateway @relation(fields: [gatewayId], references: [id])
+  transaction   Transaction    @relation(fields: [transactionId], references: [id])
+}
+
+model Round {
+  id                String            @id @default(uuid())
+  title             String
+  startTime         DateTime
+  endTime           DateTime
+  status            RoundStatus       @default(OPEN)
+  poolAmount        Decimal           @default(0) @db.Decimal(10, 2)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  accumulatedPrizes AccumulatedPrize?
+  betSlips          BetSlip[]
+  matches           Match[]
+}
+
+model Match {
+  id             String         @id @default(uuid())
+  roundId        String
+  homeTeam       String
+  awayTeam       String
+  stadium        String?
+  startTime      DateTime
+  result         Prediction?
+  createdAt      DateTime       @default(now())
+  awayLogo       String?
+  homeLogo       String?
+  betSlipMatches BetSlipMatch[]
+  round          Round          @relation(fields: [roundId], references: [id])
+}
+
+model BetSlip {
+  id           String         @id @default(uuid())
+  userId       String
+  roundId      String
+  status       String         @default("ACTIVE")
+  price        Decimal        @default(10.00) @db.Decimal(10, 2)
+  totalAcertos Int            @default(0)
+  prizeAmount  Decimal        @default(0) @db.Decimal(10, 2)
+  createdAt    DateTime       @default(now())
+  round        Round          @relation(fields: [roundId], references: [id])
+  user         User           @relation(fields: [userId], references: [id])
+  matches      BetSlipMatch[]
+}
+
+model BetSlipMatch {
+  id         String     @id @default(uuid())
+  betSlipId  String
+  matchId    String
+  prediction Prediction
+  isCorrect  Boolean?
+  createdAt  DateTime   @default(now())
+  betSlip    BetSlip    @relation(fields: [betSlipId], references: [id])
+  match      Match      @relation(fields: [matchId], references: [id])
+}
+
+model AccumulatedPrize {
+  id        String   @id @default(uuid())
+  roundId   String   @unique
+  tier14    Decimal  @default(0) @db.Decimal(10, 2)
+  tier13    Decimal  @default(0) @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  round     Round    @relation(fields: [roundId], references: [id])
+}
+
+model ReserveFund {
+  id             String   @id @default(uuid())
+  currentBalance Decimal  @default(0) @db.Decimal(10, 2)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum RoundStatus {
+  OPEN
+  CLOSED
+  FINALIZED
+  PROCESSED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAW
+  BET
+  PRIZE
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+enum GatewayProvider {
+  MERCADOPAGO
+  STRIPE
+  PAGSEGURO
+  EFIPAY
+}
+
+enum OrderStatus {
+  PENDING
+  APPROVED
+  CANCELLED
+  EXPIRED
+}
+
+enum Prediction {
+  H
+  D
+  A
+}
