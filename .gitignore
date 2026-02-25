@@ -19,10 +19,10 @@ dist/
 *.pem
 *.p12
 *.txt
-*.js
-*.ts
-!backend/src/**/*.ts
-!frontend/src/**/*.tsx
+
+# Allow source files
+!backend/src/**
+!frontend/src/**
 !*.json
 !*.md
 !Dockerfile
