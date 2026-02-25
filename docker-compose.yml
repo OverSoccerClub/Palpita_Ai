@@ -1,27 +1,12 @@
 services:
-  db:
-    image: postgres:15-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-Infor586467}
-      POSTGRES_DB: ${DB_NAME:-palpita_ai}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - palpita-net
-
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     restart: always
     environment:
-      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-Infor586467}@db:5432/${DB_NAME:-palpita_ai}?schema=public
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:Infor586467@palpitai-app_postgres-banco:5432/palpitai-app?sslmode=disable}
       PORT: 3001
-      # Add other EfiPay/MP env vars here as needed for Easypanel
-    depends_on:
-      - db
     ports:
       - "3001:3001"
     networks:
@@ -38,10 +23,6 @@ services:
       - "3000:3000"
     networks:
       - palpita-net
-
-volumes:
-  postgres_data:
-
 
 networks:
   palpita-net:
