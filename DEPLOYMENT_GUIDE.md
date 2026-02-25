@@ -17,7 +17,10 @@ Implementei as correções definitivas para o sistema de saques, incluindo supor
    - Crie um novo serviço do tipo **App**.
    - **Aba Github**: Build Path = `backend` (sem a barra inicial).
    - **Aba Dockerfile**: Mude o campo **Path** de `Dockerfile` para `backend/Dockerfile`.
-   - Use a variável de ambiente: `DATABASE_URL=postgresql://postgres:Infor586467@palpitai-app_postgres-banco:5432/palpitai-app?sslmode=disable`.
+   - **Váriáveis de Ambiente**:
+     - `DATABASE_URL=postgresql://postgres:Infor586467@palpitai-app_postgres-banco:5432/palpitai-app?sslmode=disable`
+     - `ALLOWED_ORIGINS=https://palpitai.app.br` (Substitua pelo seu domínio do painel web).
+     - `JWT_SECRET=Infor586467`
 4. **Web (Frontend)**:
    - Crie outro serviço do tipo **App**.
    - **Aba Github**: Build Path = `frontend` (sem a barra inicial).
