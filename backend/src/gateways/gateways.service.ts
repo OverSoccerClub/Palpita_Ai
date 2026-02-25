@@ -17,6 +17,7 @@ export class GatewaysService {
                     createdAt: true, updatedAt: true,
                 },
             });
+            console.log(`[GatewaysService] Query finished. Count: ${results.length}`);
             console.log(`[GatewaysService] Found ${results.length} gateways`);
             return results;
         } catch (error: any) {
